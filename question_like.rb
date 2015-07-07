@@ -10,13 +10,13 @@ class QuestionLike
       WHERE
         question_likes.id = ?
     SQL
-    self.new(query)
+    self.new(query.first)
   end
 
   def initialize(options)
-    @id = options[id]
-    @question_id = options[question_id]
-    @author_id = options[author_id]
+    @id = options["id"]
+    @question_id = options["question_id"]
+    @author_id = options["author_id"]
   end
 
 end
