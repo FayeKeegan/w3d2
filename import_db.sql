@@ -58,13 +58,18 @@ INSERT INTO
 VALUES
   ("Faye", "Keegan"),
   ("Elton", "Chan"),
-  ("Eric", "S.");
+  ("Eric", "S."),
+  ("Barack", "Obama"),
+  ("Taylor", "Swift"),
+  ("Ned", "Stark");
 
 INSERT INTO
   questions (title, body, author_id)
 VALUES
   ("Who are you?", "I need to know!", 1),
-  ("Did I get a strike today!?", "Please no!", 2);
+  ("Did I get a strike today!?", "Please no!", 2),
+  ("Have you heard my new album?", "It's great!", 5),
+  ("I'm the president!", "I'm so powerful!", 4);
 
 INSERT INTO
   question_follows (question_id, author_id)
@@ -86,4 +91,13 @@ VALUES
 INSERT INTO
   question_likes (author_id, question_id)
 VALUES
-  (2, 1);
+  (2, 1),
+  (3, 1),
+  (1, 1),
+  (1, 2),
+  (2, 2),
+  (3, 2),
+  (4, 2),
+  (2, 3),
+  (1, 3),
+  (5, 3);

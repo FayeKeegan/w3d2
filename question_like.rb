@@ -57,6 +57,29 @@ class QuestionLike
     end
   end
 
+  def self.most_liked_questions(n)
+    rows = QuestionsDatabase.instance.execute(<<-SQL)
+      SELECT
+        questions.*
+      FROM
+        questions
+      JOIN (
+          SELECT
+            count(question_likes.id) as like_count, question_id
+          FROM
+            question_likes
+          GROUP BY
+            question_id
+        ) as count ON questions.id = count.question_id
+      ORDER BY
+        count.like_count DESC
+    SQL
+
+    rows.take(n).map do |row|
+      Question.new(row)
+    end
+  end
+
   def initialize(options)
     @id = options["id"]
     @question_id = options["question_id"]

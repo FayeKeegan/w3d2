@@ -1,5 +1,6 @@
 class User
-  attr_reader :id, :fname, :lname
+  attr_accessor :fname, :lname
+  attr_reader :id
 
   def self.find_by_id(id)
     query = QuestionsDatabase.instance.execute(<<-SQL, id)
@@ -25,8 +26,6 @@ class User
     self.new(query.first)
   end
 
-
-
   def initialize(options)
     @id = options["id"]
     @fname = options["fname"]
@@ -47,6 +46,48 @@ class User
 
   def liked_questions
     QuestionLike.liked_questions_for_author_id(id)
+  end
+
+  def average_karma
+    average_karma = QuestionsDatabase.instance.execute(<<-SQL, id)
+      SELECT
+        CAST(COUNT(question_likes.id) AS FLOAT) /
+        CAST(COUNT(DISTINCT questions.id) AS FLOAT)
+          AS avg_karma
+      FROM
+        questions
+      LEFT OUTER JOIN
+        question_likes ON question_likes.question_id = questions.id
+      WHERE
+        questions.author_id = ?
+      GROUP BY
+        questions.author_id
+    SQL
+    average_karma.first ? average_karma.first["avg_karma"] : 0.0
+  end
+
+  def save
+    if id.nil?
+      QuestionsDatabase.instance.execute(<<-SQL, fname, lname)
+        INSERT INTO
+          users (fname, lname)
+        VALUES
+          (?, ?)
+      SQL
+      @id = (QuestionsDatabase.instance.execute("SELECT last_insert_rowid() AS id")).first["id"]
+      # @id = User.find_by_name(fname, lname).id
+    else
+      QuestionsDatabase.instance.execute(<<-SQL, fname, lname, id)
+        UPDATE
+          users
+        SET
+          fname = ?, lname = ?
+        WHERE
+          id = ?
+      SQL
+    end
+
+    true
   end
 
 end
