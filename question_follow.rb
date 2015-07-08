@@ -1,6 +1,9 @@
 class QuestionFollow
   attr_reader :id, :question_id, :author_id
 
+  TABLE_NAME = "question_follows"
+  include Saveable
+
   def self.find_by_id(id)
     query = QuestionsDatabase.instance.execute(<<-SQL, id)
       SELECT
@@ -46,7 +49,7 @@ class QuestionFollow
   end
 
   def self.most_followed_questions(n)
-    rows = QuestionsDatabase.instance.execute(<<-SQL)
+    rows = QuestionsDatabase.instance.execute(<<-SQL, n)
       SELECT
         questions.*
       FROM
@@ -61,9 +64,11 @@ class QuestionFollow
         ) as count ON questions.id = count.question_id
       ORDER BY
         count.follower_count DESC
+      LIMIT
+        ?
     SQL
 
-    rows.take(n).map do |row|
+    rows.map do |row|
       Question.new(row)
     end
   end

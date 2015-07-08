@@ -1,6 +1,9 @@
 class QuestionLike
   attr_reader :id, :question_id, :author_id
 
+  TABLE_NAME = "question_likes"
+  include Saveable
+
   def self.find_by_id(id)
     query = QuestionsDatabase.instance.execute(<<-SQL, id)
       SELECT
@@ -58,7 +61,7 @@ class QuestionLike
   end
 
   def self.most_liked_questions(n)
-    rows = QuestionsDatabase.instance.execute(<<-SQL)
+    rows = QuestionsDatabase.instance.execute(<<-SQL, n)
       SELECT
         questions.*
       FROM
@@ -73,9 +76,11 @@ class QuestionLike
         ) as count ON questions.id = count.question_id
       ORDER BY
         count.like_count DESC
+      LIMIT
+        ?
     SQL
 
-    rows.take(n).map do |row|
+    rows.map do |row|
       Question.new(row)
     end
   end

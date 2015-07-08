@@ -1,6 +1,11 @@
+require_relative 'saveable'
+
 class User
   attr_accessor :fname, :lname
   attr_reader :id
+
+  TABLE_NAME = "users"
+  include Saveable
 
   def self.find_by_id(id)
     query = QuestionsDatabase.instance.execute(<<-SQL, id)
@@ -64,30 +69,6 @@ class User
         questions.author_id
     SQL
     average_karma.first ? average_karma.first["avg_karma"] : 0.0
-  end
-
-  def save
-    if id.nil?
-      QuestionsDatabase.instance.execute(<<-SQL, fname, lname)
-        INSERT INTO
-          users (fname, lname)
-        VALUES
-          (?, ?)
-      SQL
-      @id = (QuestionsDatabase.instance.execute("SELECT last_insert_rowid() AS id")).first["id"]
-      # @id = User.find_by_name(fname, lname).id
-    else
-      QuestionsDatabase.instance.execute(<<-SQL, fname, lname, id)
-        UPDATE
-          users
-        SET
-          fname = ?, lname = ?
-        WHERE
-          id = ?
-      SQL
-    end
-
-    true
   end
 
 end

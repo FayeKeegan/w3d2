@@ -2,6 +2,9 @@ class Question
 
   attr_reader :id, :title, :body, :author_id
 
+  TABLE_NAME = "questions"
+  include Saveable
+
   def self.find_by_id(id)
     query = QuestionsDatabase.instance.execute(<<-SQL, id)
       SELECT

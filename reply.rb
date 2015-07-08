@@ -1,5 +1,9 @@
 class Reply
   attr_reader :id, :question_id, :parent_reply_id, :author_id, :reply_body
+
+  TABLE_NAME = "replies"
+  include Saveable
+
   def self.find_by_id(id)
     query = QuestionsDatabase.instance.execute(<<-SQL, id)
       SELECT
