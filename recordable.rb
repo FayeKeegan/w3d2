@@ -3,10 +3,9 @@ module Recordable
   def where(options)
     table_name = self::TABLE_NAME
     where_array = []
-    options.each {|k, v| where_array << "#{table_name}.#{k} = \'#{v}\'"}
+    options.keys.each {|k| where_array << "#{table_name}.#{k} = ?"}
     where_string = where_array.join(" AND ")
-    puts where_string
-    rows = QuestionsDatabase.instance.execute(<<-SQL)
+    rows = QuestionsDatabase.instance.execute(<<-SQL, *options.values)
       SELECT
         *
       FROM
