@@ -2,7 +2,8 @@ class QuestionFollow
   attr_reader :id, :question_id, :author_id
 
   TABLE_NAME = "question_follows"
-  include Saveable
+  extend Recordable
+  include Recordable
 
   def self.find_by_id(id)
     query = QuestionsDatabase.instance.execute(<<-SQL, id)

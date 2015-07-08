@@ -1,11 +1,12 @@
-require_relative 'saveable'
+
 
 class User
   attr_accessor :fname, :lname
   attr_reader :id
 
   TABLE_NAME = "users"
-  include Saveable
+  extend Recordable
+  include Recordable
 
   def self.find_by_id(id)
     query = QuestionsDatabase.instance.execute(<<-SQL, id)

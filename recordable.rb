@@ -1,4 +1,25 @@
-module Saveable
+module Recordable
+
+  def where(options)
+    table_name = self::TABLE_NAME
+    where_array = []
+    options.each {|k, v| where_array << "#{table_name}.#{k} = \'#{v}\'"}
+    where_string = where_array.join(" AND ")
+    puts where_string
+    rows = QuestionsDatabase.instance.execute(<<-SQL)
+      SELECT
+        *
+      FROM
+        #{table_name}
+      WHERE
+        #{where_string}
+    SQL
+    rows.map do |row|
+      self.new(row)
+    end
+
+  end
+
 
   def mutable_column_names
     names = []
@@ -39,5 +60,4 @@ module Saveable
       @id = QuestionsDatabase.instance.last_insert_row_id
     end
   end
-
 end

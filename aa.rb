@@ -11,6 +11,7 @@ class QuestionsDatabase < SQLite3::Database
     end
 end
 
+require_relative 'recordable'
 require_relative 'user.rb'
 require_relative 'question.rb'
 require_relative 'question_follow.rb'
